@@ -1,8 +1,8 @@
-from credentials.cred import USERNAME, PASSWORD, TOKEN
+from credentials.cred import USERNAME, PASSWORD, TOKEN, CRED_FILE
 from credentials.config import HEADERS
 from api.authentication import auth, check_auth, write_down_token
 from api.users import add_user, get_user, delete_user, edit_user, find_users
-from api.objects import get_object, add_object
+from api.objects import find_object, add_object
 from api.clients import get_clients, add_client, delete_client, get_client, edit_client
 from api import RequestException
 from create_client_user import create_client
@@ -26,7 +26,7 @@ def main():
     token = TOKEN
     if not check_auth(token):
         token = get_token()
-        write_down_token(token, 'credentials/cred.py')
+        write_down_token(token, CRED_FILE)
     HEADERS['X-Auth'] = token
 
     try:

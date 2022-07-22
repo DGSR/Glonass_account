@@ -4,9 +4,19 @@ import requests
 import time
 
 from api.autofill import auto_fill_client
-from api import RequestException
+from api.base_request import base_delete, base_add, base_edit, base_get
 from credentials.config import (BASE_URL, HEADERS, CLIENTS_FIND_URL,
                                 CLIENTS_BASE_URL)
+
+
+def get_client(client_id: str) -> dict:
+    final_url = BASE_URL + CLIENTS_BASE_URL + client_id
+    return base_get(final_url)
+
+
+def delete_client(client_ids: List) -> str:
+    final_url = BASE_URL + CLIENTS_BASE_URL
+    return base_delete(final_url, client_ids, 'clients')
 
 
 def get_clients(parent_id: str = '') -> List:
@@ -29,32 +39,10 @@ def get_clients(parent_id: str = '') -> List:
     return result
 
 
-def get_client(client_id: str) -> dict:
-    """
-    Get all info about client using id
-    :param client_id:
-    :return:
-    """
-
-    final_url = BASE_URL + CLIENTS_BASE_URL + client_id
-    res = requests.get(final_url, headers=HEADERS)
-
-    if res.status_code != 200:
-        print(res.content)
-        raise RequestException('Something went wrong')
-
-    result = res.json()
-    return result
-
-
 def add_client(name: str = '', autofill: bool = True,
-               fields: dict = None) -> dict:
+               fields: dict = None) -> str:
     """
-    Adds user with fields or pass login and use autofill
-    :param name: If using autofill
-    :param autofill: Enables autofill
-    :param fields: Add fields to the body of request
-    :return: dict added user from server
+    prepares data for adding
     """
     request_data = {}
     if fields:
@@ -65,13 +53,7 @@ def add_client(name: str = '', autofill: bool = True,
         request_data = update_fields(auto_fill_client(client_name), request_data)
 
     final_url = BASE_URL + CLIENTS_BASE_URL
-    res = requests.post(final_url, headers=HEADERS, json=request_data)
-
-    result = res.json()
-    if result.get('Error'):
-        raise RequestException(result.get('Error'))
-
-    return result
+    return base_add(final_url, request_data, 'name', 'client')
 
 
 def update_fields(clients_fields: dict, edit_fields: dict) -> dict:
@@ -92,7 +74,7 @@ def update_fields(clients_fields: dict, edit_fields: dict) -> dict:
     return final_dict
 
 
-def edit_client(client_id: str, edit_fields: dict) -> dict:
+def edit_client(client_id: str, edit_fields: dict) -> str:
     """
     Edit client using id and fields
     :param client_id:
@@ -105,25 +87,4 @@ def edit_client(client_id: str, edit_fields: dict) -> dict:
     time.sleep(1)
 
     final_url = BASE_URL + CLIENTS_BASE_URL + client_id
-    res = requests.put(final_url, headers=HEADERS, json=client_fields)
-    result = res.json()
-    if result.get('Error'):
-        raise RequestException(result.get('Error'))
-
-    return result
-
-
-def delete_client(client_ids: List) -> str:
-    """
-    Deletes client_ids
-    client_ids passed as List of str then list get stringified and sent raw
-    :param client_ids:
-    :return: str result
-    """
-    final_url = BASE_URL + CLIENTS_BASE_URL
-    req = requests.delete(final_url, headers=HEADERS, data=str(client_ids))
-    print(req.request.body)
-    if req.status_code != 200:
-        raise f'Can not delete clients with ids {client_ids}'
-
-    return f'Clients with id = {client_ids} have been deleted'
+    return base_edit(final_url, client_fields, client_id, 'client')

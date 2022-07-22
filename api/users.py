@@ -3,52 +3,31 @@ import requests
 
 from api.autofill import auto_fill_user
 from api import RequestException
+from api.base_request import base_delete, base_find, base_add, base_edit, base_get
 
 from credentials.config import (BASE_URL, HEADERS, USERS_BASE_URL,
                                 USERS_FIND_URL, USERS_GET_URL)
 
 
 def find_users(search_parameter: dict) -> dict:
-    """
-    Gets user by search parameter
-    :param search_parameter: dict with one field
-    :return: dict User from server
-    """
-
     final_url = BASE_URL + USERS_FIND_URL
-    res = requests.post(final_url, headers=HEADERS, json=search_parameter)
-    result = res.json()[0]
-    if result.get('Error'):
-        raise RequestException(result.get('Error'))
-
-    return result
+    return base_find(final_url, search_parameter)
 
 
 def get_user(user_id: str) -> dict:
-    """
-    Gets all user details by id
-    :param user_id:
-    :return:
-    """
-
     final_url = BASE_URL + USERS_GET_URL + user_id
-    res = requests.get(final_url, headers=HEADERS)
-    result = res.json()
-    print(result)
-    if res.status_code != 200:
-        raise RequestException('Something went wrong')
+    return base_get(final_url)
 
-    return result
+
+def delete_user(user_id: str) -> str:
+    final_url = BASE_URL + USERS_BASE_URL + user_id
+    return base_delete(final_url, user_id, 'user')
 
 
 def add_user(login: str = '', autofill: bool = True,
              fields: dict = None) -> str:
     """
-    Adds user with fields or pass login and use autofill
-    :param login: If using autofill
-    :param autofill: Enables autofill
-    :param fields: Add fields to the body of request
-    :return: dict added user from server
+    prepares data for adding
     """
     request_data = {}
     user_name = fields.get('login', login)
@@ -59,30 +38,10 @@ def add_user(login: str = '', autofill: bool = True,
 
     final_url = BASE_URL + USERS_BASE_URL
 
-    res = requests.post(final_url, headers=HEADERS, json=request_data)
-    result = res.json()
-    if result.get('Error'):
-        return result.get('Error')
-
-    return f'Created user with name: {user_name}'
+    return base_add(final_url, request_data, 'login', 'user')
 
 
-def delete_user(user_id: str) -> str:
-    """
-    Delete user by id
-    :param user_id:
-    :return:
-    """
-
-    final_url = BASE_URL + USERS_BASE_URL + user_id
-    res = requests.delete(final_url, headers=HEADERS)
-    if res.status_code != 200:
-        raise RequestException('Something went wrong')
-
-    return f'User with id = {user_id} has been deleted'
-
-
-def edit_user(user_id: str, edit_fields: dict) -> dict:
+def edit_user(user_id: str, edit_fields: dict) -> str:
     """
     Edit user fields by id.
     First get user by id and then merge user fields with edit fields
@@ -97,9 +56,4 @@ def edit_user(user_id: str, edit_fields: dict) -> dict:
     time.sleep(1)
 
     final_url = BASE_URL + USERS_BASE_URL
-    res = requests.put(final_url, headers=HEADERS, json=user_fields)
-    result = res.json()
-    if result.get('Error'):
-        raise RequestException(result.get('Error'))
-
-    return result
+    return base_edit(final_url, user_fields, user_id, 'user')
