@@ -1,13 +1,11 @@
 import time
-
 import requests
-
-from credentials.config import (BASE_URL, HEADERS, USERS_BASE_URL,
-                                USERS_FIND_URL, USERS_GET_URL)
-
 
 from api.autofill import auto_fill_user
 from api import RequestException
+
+from credentials.config import (BASE_URL, HEADERS, USERS_BASE_URL,
+                                USERS_FIND_URL, USERS_GET_URL)
 
 
 def find_users(token: str, search_parameter: dict) -> dict:
@@ -29,7 +27,13 @@ def find_users(token: str, search_parameter: dict) -> dict:
     return result
 
 
-def get_user(token, user_id) -> dict:
+def get_user(token: str, user_id: str) -> dict:
+    """
+    Gets all user details by id
+    :param token:
+    :param user_id:
+    :return:
+    """
     headers = HEADERS
     headers['X-Auth'] = token
 
@@ -44,7 +48,7 @@ def get_user(token, user_id) -> dict:
 
 
 def add_user(token: str, login: str = '', autofill: bool = True,
-             fields: dict = None) -> dict:
+             fields: dict = None) -> str:
     """
     Adds user with fields or pass login and use autofill
     :param token: Authentication token
@@ -54,24 +58,32 @@ def add_user(token: str, login: str = '', autofill: bool = True,
     :return: dict added user from server
     """
     request_data = {}
+    user_name = fields.get('login', login)
     if autofill:
-        request_data.update(auto_fill_user(login))
-    request_data.update(fields)
+        request_data.update(auto_fill_user(user_name))
+    if fields:
+        request_data.update(fields)
 
     headers = HEADERS
     headers['X-Auth'] = token
 
     final_url = BASE_URL + USERS_BASE_URL
-    print(request_data)
+
     res = requests.post(final_url, headers=headers, json=request_data)
     result = res.json()
     if result.get('Error'):
-        raise RequestException(result.get('Error'))
+        return result.get('Error')
 
-    return result
+    return f'Created user with name: {user_name}'
 
 
-def delete_user(token, user_id) -> str:
+def delete_user(token: str, user_id: str) -> str:
+    """
+    Delete user by id
+    :param token: Authentication token
+    :param user_id:
+    :return:
+    """
     headers = HEADERS
     headers['X-Auth'] = token
 

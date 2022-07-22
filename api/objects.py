@@ -1,8 +1,9 @@
 import requests
 
+from api import RequestException
+
 from credentials.config import (BASE_URL, HEADERS, OBJECTS_FIND_URL,
                                 OBJECTS_ADD_URL, OBJECTS_DELETE_URL)
-from api import RequestException
 
 
 def get_object(token: str, search_parameter: dict) -> dict:
@@ -47,7 +48,13 @@ def add_object(token: str, fields: dict = None) -> dict:
     return result
 
 
-def delete_object(token, object_id):
+def delete_object(token: str, object_id: str) -> str:
+    """
+    Deletes object by id
+    :param token:
+    :param object_id:
+    :return:
+    """
     headers = HEADERS
     headers['X-Auth'] = token
 

@@ -1,17 +1,16 @@
-import requests
 import base64
+import os
+import requests
 
+from api import RequestException
 from credentials.config import (BASE_URL, AUTH_URL, AUTH_CHECK_URL,
                                 HEADERS)
-from api import RequestException
-
-import os
 
 
 def write_down_token(token: str, file: str) -> None:
     """
     ToDo: Delete on test or prod
-    rewrite file with line 'TOKEN =' to store token value
+    Rewrite given file with line 'TOKEN =' to store token value
     :param token: any string to write (token)
     :param file: any file to rewrite
     :return: None
@@ -57,6 +56,11 @@ def auth(username: str, password: str) -> str:
 
 
 def check_auth(token: str) -> bool:
+    """
+    Server checks token validity
+    :param token:
+    :return:
+    """
     final_url = BASE_URL + AUTH_CHECK_URL
 
     headers = HEADERS

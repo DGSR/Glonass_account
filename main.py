@@ -4,10 +4,11 @@ from api.users import add_user, get_user, delete_user, edit_user
 from api.objects import get_object, add_object
 from api.clients import get_clients, add_client, delete_client, get_client, edit_client
 from api import RequestException
+from create_client_user import create_client
 
 import time
 
-from credentials.test_data import d_good_parent, delete_user_token, owner, modelId, edit_user_token, get_client
+from credentials.test_data import d_good_parent, delete_user_token, owner, modelId, edit_user_token, get_client_token
 
 
 def get_token():
@@ -38,6 +39,7 @@ def main():
 
         # res = add_user(token, 'developer8', False, d)
         # print(res)
+
         # edit_fields = {
         #     'firstName': 'Иван',
         #     'lastName': 'Иванов'
@@ -51,7 +53,8 @@ def main():
         #
         # res = get_clients(token, d_good_parent)
         #
-        # res = get_client(token, get_client)
+        # print(token)
+        # res = get_client(token, token)
         # print(res)
 
         # edit_fields = {
@@ -62,16 +65,21 @@ def main():
         # res = edit_client(token, get_client, edit_fields)
         # print(res)
 
-        field_clients = {
-            'owner': d_good_parent,
-            'agentInfoType': '1'
-        }
-        res = add_client(token, 'DEV4', True, field_clients)
-        print(res)
-        # res = add_client(token, 'DEV3', True, field_clients)
+        # field_clients = {
+        #     'owner': d_good_parent,
+        #     'agentInfoType': '0'
+        # }
+        # res = add_client(token, 'DEV5', True, field_clients)
         # print(res)
+
         # res = delete_client(token, [])
         # print(res)
+
+        field_clients = {
+            'name': '9090194590'
+        }
+        res = create_client(token, field_clients)
+        print(res)
 
     except RequestException as e:
         print(e)

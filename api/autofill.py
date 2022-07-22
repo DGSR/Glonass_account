@@ -1,7 +1,7 @@
 import datetime
 
 
-def auto_fill_user(login) -> dict:
+def auto_fill_user(login: str) -> dict:
     """
     Глонасс Soft user autofill
     :param login: user's login
@@ -13,14 +13,14 @@ def auto_fill_user(login) -> dict:
         'email': login + '@tspb.su',
         'password': d.strftime("%d%m%Y"),
         'parentId': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',
-        'phone': '0000000',
+        'phone': login,
         'firstName': ' ',
         'lastName': ' ',
         'groups': ['1313']  # Lowest access possible (20-07-2022)
     }
 
 
-def auto_fill_client(name, owner) -> dict:
+def auto_fill_client(name: str) -> dict:
     """
     Глонасс Soft client autofill
     :param name: client's name
@@ -30,7 +30,6 @@ def auto_fill_client(name, owner) -> dict:
     return {
         'name': name,
         'agentInfoType': 2,
-        'owner': owner,
         'client': {
             'accFullName': name
         }

@@ -1,14 +1,12 @@
+from copy import deepcopy
+from typing import List
 import requests
 import time
-from copy import deepcopy
-
-from credentials.config import (BASE_URL, HEADERS, CLIENTS_FIND_URL,
-                                CLIENTS_BASE_URL)
-
 
 from api.autofill import auto_fill_client
 from api import RequestException
-from typing import List
+from credentials.config import (BASE_URL, HEADERS, CLIENTS_FIND_URL,
+                                CLIENTS_BASE_URL)
 
 
 def get_clients(token: str, parent_id: str = '') -> List:
@@ -48,6 +46,7 @@ def get_client(token: str, client_id: str) -> dict:
     res = requests.get(final_url, headers=headers)
 
     if res.status_code != 200:
+        print(res.content)
         raise RequestException('Something went wrong')
 
     result = res.json()
@@ -65,16 +64,17 @@ def add_client(token: str, name: str = '', autofill: bool = True,
     :return: dict added user from server
     """
     request_data = {}
-    if autofill:
-        request_data.update(auto_fill_client(name, token))
     if fields:
-        request_data.update(fields)
+        request_data = update_fields(request_data, fields)
+
+    client_name = request_data.get('name', name)
+    if autofill:
+        request_data = update_fields(auto_fill_client(client_name), request_data)
 
     headers = HEADERS
     headers['X-Auth'] = token
 
     final_url = BASE_URL + CLIENTS_BASE_URL
-    print(request_data)
     res = requests.post(final_url, headers=headers, json=request_data)
 
     result = res.json()
@@ -84,7 +84,7 @@ def add_client(token: str, name: str = '', autofill: bool = True,
     return result
 
 
-def update_fields(clients_fields: dict, edit_fields: dict):
+def update_fields(clients_fields: dict, edit_fields: dict) -> dict:
     """
     updates client_fields with edit_fields
     nested field 'clients' is updated separately
@@ -103,6 +103,13 @@ def update_fields(clients_fields: dict, edit_fields: dict):
 
 
 def edit_client(token: str, client_id: str, edit_fields: dict) -> dict:
+    """
+    Edit client using id and fields
+    :param token:
+    :param client_id:
+    :param edit_fields: updates dict with these fields
+    :return:
+    """
     client_fields = get_client(token, client_id)
     client_fields = update_fields(client_fields, edit_fields)
 
