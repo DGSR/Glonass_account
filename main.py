@@ -14,7 +14,6 @@ from credentials.test_data import d_good_parent, delete_user_token, owner, model
 
 def get_token():
     try:
-        # token = auth(USERNAME + 'h', PASSWORD)   # Wrong User for Test
         token = auth(USERNAME, PASSWORD)
     except RequestException as e:
         print(e)
