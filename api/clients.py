@@ -40,7 +40,7 @@ def get_clients(parent_id: str = '') -> List:
 
 
 def add_client(name: str = '', autofill: bool = True,
-               fields: dict = None) -> str:
+               fields: dict = None) -> dict:
     """
     prepares data for adding
     """

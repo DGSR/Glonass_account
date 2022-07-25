@@ -1,7 +1,5 @@
 from api.base_request import base_delete, base_find, base_add
-
-from credentials.config import (BASE_URL, HEADERS, OBJECTS_FIND_URL,
-                                OBJECTS_BASE_URL)
+from credentials.config import BASE_URL, OBJECTS_FIND_URL, OBJECTS_BASE_URL
 
 
 def find_object(search_parameter: dict) -> dict:
@@ -9,7 +7,7 @@ def find_object(search_parameter: dict) -> dict:
     return base_find(final_url, search_parameter)
 
 
-def add_object(fields: dict = None) -> str:
+def add_object(fields: dict = None) -> dict:
     request_data = {}
     if fields:
         request_data.update(fields)

@@ -1,11 +1,9 @@
 import time
-import requests
 
 from api.autofill import auto_fill_user
-from api import RequestException
 from api.base_request import base_delete, base_find, base_add, base_edit, base_get
 
-from credentials.config import (BASE_URL, HEADERS, USERS_BASE_URL,
+from credentials.config import (BASE_URL, USERS_BASE_URL,
                                 USERS_FIND_URL, USERS_GET_URL)
 
 
@@ -25,7 +23,7 @@ def delete_user(user_id: str) -> str:
 
 
 def add_user(login: str = '', autofill: bool = True,
-             fields: dict = None) -> str:
+             fields: dict = None) -> dict:
     """
     prepares data for adding
     """
@@ -49,8 +47,10 @@ def edit_user(user_id: str, edit_fields: dict) -> str:
     :param edit_fields: dict with fields that should be changed
     :return: user dict from server
     """
+    # user_fields = find_users({'userId': user_id})
     user_fields = get_user(user_id)
     user_fields.update(edit_fields)
+
     user_fields['login'] = user_fields['name']
 
     time.sleep(1)

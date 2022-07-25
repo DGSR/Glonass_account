@@ -25,7 +25,6 @@ def base_get(url: str) -> dict:
     :return: entity from server
     """
     res = requests.get(url, headers=HEADERS)
-
     if res.status_code != 200:
         raise RequestException('Something went wrong')
 
@@ -33,7 +32,7 @@ def base_get(url: str) -> dict:
     return result
 
 
-def base_add(url: str, body: dict, entity_name: str, entity_hint: str) -> str:
+def base_add(url: str, body: dict, entity_name: str, entity_hint: str) -> dict:
     """
     Adds user with fields or pass login and use autofill
     :param url: url to add entity
@@ -47,7 +46,8 @@ def base_add(url: str, body: dict, entity_name: str, entity_hint: str) -> str:
     if result.get('Error'):
         return result.get('Error')
 
-    return f'Created {entity_hint} : {body.get(entity_name, None)}'
+    print(f'Created {entity_hint} : {body.get(entity_name, None)}')
+    return result
 
 
 def base_edit(url: str, body: dict, entity_id: str, entity_hint: str) -> str:
@@ -59,10 +59,13 @@ def base_edit(url: str, body: dict, entity_id: str, entity_hint: str) -> str:
     :param entity_hint: string representing entity's name
     :return: status of operation
     """
+    print(body)
     res = requests.put(url, headers=HEADERS, json=body)
     result = res.json()
+    print(res.content)
     if result.get('Error'):
         return f'Error. Can NOT edit {entity_hint} : {entity_id}'
+    print(result)
 
     return f'Edited {entity_hint} :  {entity_id}'
 

@@ -55,17 +55,11 @@ def auth(username: str, password: str) -> str:
     return result.get('AuthId')
 
 
-def check_auth(token: str) -> bool:
+def check_auth() -> bool:
     """
     Server checks token validity
-    :param token:
-    :return:
     """
     final_url = BASE_URL + AUTH_CHECK_URL
-
-    headers = HEADERS
-    headers['X-Auth'] = token
-
-    req = requests.get(final_url, headers=headers)
+    req = requests.get(final_url, HEADERS)
 
     return False if req.status_code != 200 else True
