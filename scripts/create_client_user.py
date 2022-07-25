@@ -22,6 +22,7 @@ def create_client(client_fields: dict, user_fields: dict = None) -> str:
     client_dict.update(client_fields)
 
     new_client = add_client(fields=client_dict)
+    print(new_client)
 
     user_dict = {
         'login': client_dict['name'],
@@ -31,6 +32,6 @@ def create_client(client_fields: dict, user_fields: dict = None) -> str:
 
     time.sleep(1)
 
-    add_user(fields=user_dict)
+    print(add_user(fields=user_dict))
 
     return f'Created client and user inside it with name: {client_dict["name"]}'

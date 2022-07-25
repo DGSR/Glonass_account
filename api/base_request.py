@@ -24,11 +24,13 @@ def base_get(url: str) -> dict:
     :param url: url to get entity
     :return: entity from server
     """
+    print('get', url)
     res = requests.get(url, headers=HEADERS)
     if res.status_code != 200:
         raise RequestException('Something went wrong')
 
     result = res.json()
+    print('get', result)
     return result
 
 
@@ -59,12 +61,12 @@ def base_edit(url: str, body: dict, entity_id: str, entity_hint: str = '') -> st
     :param entity_hint: str representing entity's name (for logging purpose)
     :return: status of operation
     """
-    print(body)
+    print('edit', body)
     res = requests.put(url, headers=HEADERS, json=body)
     result = res.json()
     if result.get('Error'):
         return f'Error. Can NOT edit {entity_hint}: {entity_id}'
-    print(result)
+    print('edit', result)
 
     return f'Edited {entity_hint}:  {entity_id}'
 
@@ -82,6 +84,7 @@ def base_delete(url: str, entity_id, entity_hint: str = '') -> str:
     else:
         res = requests.delete(url, headers=HEADERS)
     if res.status_code != 200:
+        print(res.content)
         return f'Error. Can NOT delete {entity_hint}: {entity_id}'
 
     return f'Deleted {entity_hint}:  {entity_id}'

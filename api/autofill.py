@@ -9,10 +9,12 @@ def auto_fill_user(login: str) -> dict:
     """
     d = datetime.datetime.now()
     return {
-        'login': login,
+        # 'login': login,   #  v3
+        'name': login,
         'email': login + '@tspb.su',
         'password': d.strftime("%d%m%Y"),
-        'parentId': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',
+        # 'parentId': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',  #  v3
+        'AgentGuid': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',
         'phone': login,
         'firstName': ' ',
         'lastName': ' ',

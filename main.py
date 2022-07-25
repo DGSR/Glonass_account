@@ -1,15 +1,14 @@
 from credentials.cred import USERNAME, PASSWORD, TOKEN, CRED_FILE
 from credentials.config import HEADERS
 from api.authentication import auth, check_auth, write_down_token
-from api.users import add_user, get_user, delete_user, edit_user, find_users
-from api.objects import find_object, add_object
-from api.clients import get_clients, add_client, delete_client, get_client, edit_client
+from api.users import get_user, add_user, delete_user, find_users
+from api.clients import get_clients
 from api import RequestException
-from create_client_user import create_client
+from scripts import transition_to_custom_roles
 
 import time
 
-from credentials.test_data import d_good_parent, delete_user_token, owner, modelId, edit_user_id, get_client_token
+from credentials.test_data import edit_user_id, d_good_parent, d, user_groups_mapping, delete_user_id
 
 
 def get_token():
@@ -32,17 +31,26 @@ def main():
     try:
         time.sleep(1)
         res = None
-        # res = find_users({'login': 'developer'})
+        res = find_users({'login': 'developer'})
         # res = find_users({'userId': edit_user_id})
-        # res = delete_user(delete_user_token)
+        # res = delete_user(delete_user_id)
 
-        # res = add_user('developer8', False, d)
+        res = add_user('developer00', True, d)
+        # print(res)
+        # time.sleep(1)
+        # res = add_user('developer8', True, d)
 
-        edit_fields = {
-            'firstName': 'Федор',
-            'lastName': 'Иванов',
-        }
-        res = edit_user(edit_user_id, edit_fields)
+        # richardwell '11078dbb-ed78-43fa-a392-6037911e50be'
+        # developer7
+        # {'id': 'e1709be2-dd60-439e-8fde-e0b93c2cca9d'
+        # developer8
+        # {'id': '09b4432a-44f1-4115-914e-1b7612d8616f'
+        # res = transition_to_custom_roles.execute(user_groups_mapping)
+        # edit_fields = {
+        #     'firstName': 'Федор',
+        #     'lastName': 'Иванов',
+        # }
+        # res = edit_user(edit_user_id, edit_fields)
 
         # res = get_user(edit_user_id)
 
@@ -50,7 +58,7 @@ def main():
 
         # res = add_object(fields_objects)
         #
-        # res = get_clients(d_good_parent)
+        # res = get_clients()
 
         # res = get_client(token)
 
@@ -73,7 +81,7 @@ def main():
         #     'name': '9090194590'
         # }
         # res = create_client(field_clients)
-
+        #
         print(res)
 
     except RequestException as e:
