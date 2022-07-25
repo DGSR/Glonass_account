@@ -32,13 +32,13 @@ def base_get(url: str) -> dict:
     return result
 
 
-def base_add(url: str, body: dict, entity_name: str, entity_hint: str) -> dict:
+def base_add(url: str, body: dict, entity_name: str, entity_hint: str = '') -> dict:
     """
     Adds user with fields or pass login and use autofill
     :param url: url to add entity
     :param body: request body
     :param entity_name: entity name's value in body
-    :param entity_hint: string representing entity's name
+    :param entity_hint: str representing entity's name (for logging purpose)
     :return: status of operation
     """
     res = requests.post(url, headers=HEADERS, json=body)
@@ -46,36 +46,35 @@ def base_add(url: str, body: dict, entity_name: str, entity_hint: str) -> dict:
     if result.get('Error'):
         return result.get('Error')
 
-    print(f'Created {entity_hint} : {body.get(entity_name, None)}')
+    print(f'Created {entity_hint}: {body.get(entity_name, None)}')
     return result
 
 
-def base_edit(url: str, body: dict, entity_id: str, entity_hint: str) -> str:
+def base_edit(url: str, body: dict, entity_id: str, entity_hint: str = '') -> str:
     """
-    Edit with parameters
+    Edit entity with parameters
     :param url: url to edit entity
     :param body: entity's body
     :param entity_id:
-    :param entity_hint: string representing entity's name
+    :param entity_hint: str representing entity's name (for logging purpose)
     :return: status of operation
     """
     print(body)
     res = requests.put(url, headers=HEADERS, json=body)
     result = res.json()
-    print(res.content)
     if result.get('Error'):
-        return f'Error. Can NOT edit {entity_hint} : {entity_id}'
+        return f'Error. Can NOT edit {entity_hint}: {entity_id}'
     print(result)
 
-    return f'Edited {entity_hint} :  {entity_id}'
+    return f'Edited {entity_hint}:  {entity_id}'
 
 
-def base_delete(url: str, entity_id, entity_hint: str) -> str:
+def base_delete(url: str, entity_id, entity_hint: str = '') -> str:
     """
     Delete entity by id
     :param url: url to delete entity
     :param entity_id: a string or a list with id
-    :param entity_hint: string representing entity's name
+    :param entity_hint: str representing entity's name (for logging purpose)
     :return: status of operation
     """
     if type(entity_id) == list:
@@ -83,6 +82,6 @@ def base_delete(url: str, entity_id, entity_hint: str) -> str:
     else:
         res = requests.delete(url, headers=HEADERS)
     if res.status_code != 200:
-        return f'Error. Can NOT delete {entity_hint} : {entity_id}'
+        return f'Error. Can NOT delete {entity_hint}: {entity_id}'
 
-    return f'Deleted {entity_hint} :  {entity_id}'
+    return f'Deleted {entity_hint}:  {entity_id}'

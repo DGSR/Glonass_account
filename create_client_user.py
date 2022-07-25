@@ -1,18 +1,16 @@
-from api.clients import add_client
-from api.users import add_user
-from typing import Tuple
 import time
 
+from api.clients import add_client
+from api.users import add_user
 from credentials.cred import OWNER
 
 
-def create_client(token, client_fields: dict, user_fields: dict = None) -> str:
+def create_client(client_fields: dict, user_fields: dict = None) -> str:
     """
     create client and user for created client, using ONLY username
     REQUIRED params: username inside client_fields
     username MUST be digits
     IMPORTANT params: groups for user_fields
-    :param token:
     :param client_fields: REQUIRES name
     :param user_fields: OPTIONAL fields for users
     :return:
@@ -23,14 +21,16 @@ def create_client(token, client_fields: dict, user_fields: dict = None) -> str:
     }
     client_dict.update(client_fields)
 
-    new_client = add_client(token, fields=client_dict)
+    new_client = add_client(fields=client_dict)
 
     user_dict = {
         'login': client_dict['name'],
         'parentId': new_client['client']['id']
     }
     user_dict.update(user_fields) if user_fields else 0
+
     time.sleep(1)
-    add_user(token, fields=user_dict)
+
+    add_user(fields=user_dict)
 
     return f'Created client and user inside it with name: {client_dict["name"]}'

@@ -39,11 +39,11 @@ def main():
         # res = add_user('developer8', False, d)
 
         edit_fields = {
-            'firstName': 'Иван',
-            'lastName': 'Федоров',
-            'customGroups': ['Клиент']
+            'firstName': 'Федор',
+            'lastName': 'Иванов',
         }
-        # res = edit_user(edit_user_id, edit_fields)
+        res = edit_user(edit_user_id, edit_fields)
+
         # res = get_user(edit_user_id)
 
         # res = find_object({'name': 'devmobil'})

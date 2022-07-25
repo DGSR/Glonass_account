@@ -47,11 +47,11 @@ def edit_user(user_id: str, edit_fields: dict) -> str:
     :param edit_fields: dict with fields that should be changed
     :return: user dict from server
     """
-    # user_fields = find_users({'userId': user_id})
     user_fields = get_user(user_id)
     user_fields.update(edit_fields)
 
     user_fields['login'] = user_fields['name']
+    user_fields['parentId'] = user_fields['agentGuid']
 
     time.sleep(1)
 
