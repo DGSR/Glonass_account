@@ -27,6 +27,7 @@ def base_get(url: str) -> dict:
     print('get', url)
     res = requests.get(url, headers=HEADERS)
     if res.status_code != 200:
+        print(res.content)
         raise RequestException('Something went wrong')
 
     result = res.json()

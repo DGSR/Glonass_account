@@ -19,6 +19,7 @@ def create_client(client_fields: dict, user_fields: dict = None) -> str:
         'agentInfoType': '0',
         'owner': OWNER
     }
+
     client_dict.update(client_fields)
 
     new_client = add_client(fields=client_dict)
