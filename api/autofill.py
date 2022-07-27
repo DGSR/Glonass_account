@@ -1,4 +1,5 @@
 import datetime
+from credentials.cred import OWNER, DEV_CLIENT
 
 
 def auto_fill_user(login: str) -> dict:
@@ -13,12 +14,13 @@ def auto_fill_user(login: str) -> dict:
         'name': login,
         'email': login + '@tspb.su',
         'password': d.strftime("%d%m%Y"),
-        # 'parentId': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',  #  v3
-        'AgentGuid': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',
+        # 'parentId': client,  #  v3
+        'agentGuid': DEV_CLIENT,
         'phone': login,
-        'firstName': ' ',
-        'lastName': ' ',
-        'groups': ['1313']  # Lowest access possible (20-07-2022)
+        'firstName': login,
+        'lastName': login,
+        'groups': [],
+        'customGroups': ['f471d984-9bc1-44e1-a4a3-93eb83add545']  # Клиент
     }
 
 
@@ -32,7 +34,21 @@ def auto_fill_client(name: str) -> dict:
     return {
         'name': name,
         'agentInfoType': 2,
+        'owner': OWNER,
         'client': {
             'accFullName': name
         }
+    }
+
+
+def autofill_model(owner):
+    """
+    Глонасс Soft model autofill
+    :param owner: client's id who owns model type
+    :return:
+    """
+    return {
+        'modelType': 3,
+        'name': 'Транспорт',
+        'owner': owner
     }
