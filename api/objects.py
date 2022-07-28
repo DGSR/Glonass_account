@@ -21,4 +21,4 @@ def add_object(fields: dict = None) -> dict:
 
 def delete_object(object_id: str) -> str:
     final_url = BASE_URL + OBJECTS_BASE_URL + object_id
-    return base_delete(final_url, object, 'object')
+    return base_delete(final_url, object_id, 'object')

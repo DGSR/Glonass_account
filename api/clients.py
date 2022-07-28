@@ -3,7 +3,7 @@ from typing import List
 import requests
 import time
 
-from api.autofill import auto_fill_client
+from api.autofill import autofill_client
 from api.base_request import base_delete, base_add, base_edit, base_get
 from credentials.config import (BASE_URL, HEADERS, CLIENTS_FIND_URL,
                                 CLIENTS_BASE_URL)
@@ -50,7 +50,7 @@ def add_client(name: str = '', autofill: bool = True,
 
     client_name = request_data.get('name', name)
     if autofill:
-        request_data = update_fields(auto_fill_client(client_name), request_data)
+        request_data = update_fields(autofill_client(client_name), request_data)
 
     final_url = BASE_URL + CLIENTS_BASE_URL
     return base_add(final_url, request_data, 'name', 'client')

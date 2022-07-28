@@ -2,7 +2,7 @@ import datetime
 from credentials.cred import OWNER, DEV_CLIENT
 
 
-def auto_fill_user(login: str) -> dict:
+def autofill_user(login: str) -> dict:
     """
     Глонасс Soft user autofill
     :param login: user's login
@@ -19,16 +19,20 @@ def auto_fill_user(login: str) -> dict:
         'phone': login,
         'firstName': login,
         'lastName': login,
+        'organization': login,
+        'description': login,
+        'position': login,
+        'isEnabled': True,
+        'status': 2,
         'groups': [],
         'customGroups': ['f471d984-9bc1-44e1-a4a3-93eb83add545']  # Клиент
     }
 
 
-def auto_fill_client(name: str) -> dict:
+def autofill_client(name: str) -> dict:
     """
     Глонасс Soft client autofill
     :param name: client's name
-    :param owner: id of client owner
     :return:
     """
     return {

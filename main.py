@@ -4,7 +4,7 @@ from api.authentication import auth, check_auth, write_down_token
 from api.users import get_user, add_user, delete_user, find_users
 from api.clients import get_clients
 from api.objects import add_object, get_object
-from api.models import get_model
+from api.models import get_model, add_model
 from api import RequestException
 from scripts import transition_to_custom_roles
 
@@ -33,22 +33,17 @@ def main():
     try:
         time.sleep(1)
         res = None
-        res = get_model(model_id)
+        # res = get_model(model_id)
+        res = add_model(d_good_parent, name='Машина')
+
         # res = get_object(object_id)
         # res = find_users({'login': 'developer'})
-        # res = find_users({'userId': edit_user_id})
         # res = delete_user(delete_user_id)
 
         # res = add_user('developer00', True, d)
         # print(res)
         # time.sleep(1)
-        # res = add_user('developer9', True, d)
 
-        # richardwell '11078dbb-ed78-43fa-a392-6037911e50be'
-        # developer7
-        # {'id': 'e1709be2-dd60-439e-8fde-e0b93c2cca9d'
-        # developer8
-        # {'id': '09b4432a-44f1-4115-914e-1b7612d8616f'
         # res = transition_to_custom_roles.execute(user_groups_mapping)
         # edit_fields = {
         #     'firstName': 'Федор',
@@ -56,15 +51,11 @@ def main():
         # }39b9a7c3-3a32-4c5c-81cb-e0888e81e108
         # res = edit_user(edit_user_id, edit_fields)
 
-        # res = get_user(owner)
+        # res = get_user('b7c363d3-ad97-4bb5-81a7-bf71d97b0a1f')
 
         # res = find_object({'name': 'devmobil'})
 
         # res = add_object(fields_objects)
-        #
-        # res = get_clients()
-
-        # res = get_client(token)
 
         # edit_fields = {
         #     'client': {

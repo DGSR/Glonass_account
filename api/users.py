@@ -1,6 +1,6 @@
 import time
 
-from api.autofill import auto_fill_user
+from api.autofill import autofill_user
 from api.base_request import base_delete, base_find, base_add, base_edit, base_get
 
 from credentials.config import (BASE_URL, USERS_BASE_URL,
@@ -30,7 +30,7 @@ def add_user(login: str = '', autofill: bool = True,
     request_data = {}
     user_name = fields.get('login', login)
     if autofill:
-        request_data.update(auto_fill_user(user_name))
+        request_data.update(autofill_user(user_name))
     if fields:
         request_data.update(fields)
 
@@ -49,9 +49,6 @@ def edit_user(user_id: str, edit_fields: dict) -> str:
     """
     user_fields = get_user(user_id)
     user_fields.update(edit_fields)
-
-    # user_fields['login'] = user_fields['name']  #  v3
-    # user_fields['parentId'] = user_fields['agentGuid']  #  v3
 
     time.sleep(1)
 

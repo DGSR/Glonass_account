@@ -1,4 +1,5 @@
 from api.base_request import base_delete, base_find, base_add, base_get
+from api.autofill import autofill_model
 from credentials.config import BASE_URL, MODELS_BASE_URL
 
 
@@ -7,6 +8,8 @@ def get_model(model_id: str) -> dict:
     return base_get(url)
 
 
-def add_model(**kwargs) -> dict:
+def add_model(owner, **kwargs) -> dict:
     url = BASE_URL + MODELS_BASE_URL
-    return base_add(url, kwargs, 'name', 'model')
+    body = autofill_model(owner)
+    body.update(**kwargs)
+    return base_add(url, body, 'name', 'model')
