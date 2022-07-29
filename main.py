@@ -1,8 +1,8 @@
 from credentials.cred import USERNAME, PASSWORD, TOKEN, CRED_FILE
 from credentials.config import HEADERS
 from api.authentication import auth, check_auth, write_down_token
-from api.users import get_user, add_user, delete_user, find_users
-from api.clients import get_clients
+from api.users import get_user, add_user, delete_user, find_users, edit_user
+from api.clients import get_clients, delete_client
 from api.objects import add_object, get_object
 from api.models import get_model, add_model
 from api import RequestException
@@ -10,7 +10,7 @@ from scripts import transition_to_custom_roles
 
 import time
 
-from credentials.test_data import edit_user_id, model_id, d_good_parent, d, user_groups_mapping, delete_user_id, fields_objects, owner, object_id
+from credentials import test_data
 
 
 def get_token():
@@ -34,25 +34,27 @@ def main():
         time.sleep(1)
         res = None
         # res = get_model(model_id)
-        res = add_model(d_good_parent, name='Машина')
+        # res = add_model(d_good_parent, name='Машина')
 
         # res = get_object(object_id)
         # res = find_users({'login': 'developer'})
-        # res = delete_user(delete_user_id)
+        # res = delete_user('fbe1f07a-1224-405b-b2bd-a594a3ed4226')
 
         # res = add_user('developer00', True, d)
         # print(res)
         # time.sleep(1)
 
         # res = transition_to_custom_roles.execute(user_groups_mapping)
-        # edit_fields = {
-        #     'firstName': 'Федор',
-        #     'lastName': 'Иванов',
-        # }39b9a7c3-3a32-4c5c-81cb-e0888e81e108
-        # res = edit_user(edit_user_id, edit_fields)
+        edit_fields = {
+            'firstName': 'Федор',
+            'lastName': 'Иванов',
+            'email': 'developer@mail.ru',
+            'IsDeleted': False
+        }
+        # res = edit_user(test_data.deleted_user, edit_fields)
 
-        # res = get_user('b7c363d3-ad97-4bb5-81a7-bf71d97b0a1f')
-
+        res = get_user(test_data.deleted_user)
+        #
         # res = find_object({'name': 'devmobil'})
 
         # res = add_object(fields_objects)
@@ -73,7 +75,7 @@ def main():
         # res = delete_client([])
 
         # field_clients = {
-        #     'name': '9090194590'
+        #     'name': ''
         # }
         # res = create_client(field_clients)
         #

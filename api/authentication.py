@@ -5,6 +5,7 @@ import requests
 from api import RequestException
 from credentials.config import (BASE_URL, AUTH_URL, AUTH_CHECK_URL,
                                 HEADERS)
+from credentials.cred import USERNAME, PASSWORD
 
 
 def write_down_token(token: str, file: str) -> None:
@@ -53,6 +54,12 @@ def auth(username: str, password: str) -> str:
         raise RequestException(result.get('Error'))
 
     return result.get('AuthId')
+
+
+def auth_from_creds():
+    username = USERNAME
+    password = PASSWORD
+    return auth(username, password)
 
 
 def check_auth() -> bool:
