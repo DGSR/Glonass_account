@@ -1,24 +1,24 @@
 from typing import List, Dict
 import base64
 import requests
-from credentials import settings
-from credentials.cred import USERNAME, PASSWORD
-from api.exceptions import RequestException, GlonassSoftError
-from api.authentication import auth_from_creds
 import time
+
+from credentials import settings
+from api.exceptions import RequestException, GlonassSoftError
+from credentials.cred import USERNAME, PASSWORD
 
 
 class GSApi:
 
     def __init__(self):
-
-        self.headers = settings.HEADERS
-        self.token = auth_from_creds()
-        self.headers['X-Auth'] = self.token
         self.last_request_time = time.time()
 
+        self.headers = settings.HEADERS
+        self.token = self.auth_from_creds()
+        self.headers['X-Auth'] = self.token
+
     def refresh_headers(self):
-        self.headers['X-Auth'] = auth_from_creds()
+        self.headers['X-Auth'] = self.auth_from_creds()
 
     def request_handler(self, req: requests.Request,
                         retries: int = 3) -> Dict:
@@ -34,10 +34,6 @@ class GSApi:
         # print('First request', start)  # log
         for _ in range(retries):
             r = req.prepare()
-            print(req.method)
-            print(req.url)
-            print(req.data)
-            print(req.headers)
             resp = session.send(r)
             time_diff = time.time() - self.last_request_time
             self.last_request_time = time.time()
@@ -51,23 +47,6 @@ class GSApi:
         # print('Finish request', finish, finish - start)  # log
         session.close()
         return self.response_handler(resp)
-
-    @staticmethod
-    def base64_encoding(message: str) -> str:
-        message_bytes = message.encode('ascii')
-        base64_bytes = base64.b64encode(message_bytes)
-        return base64_bytes.decode('ascii')
-
-    def auth_from_creds(self):
-        password_encode = self.base64_encoding(PASSWORD)
-        request_data = {
-            'username': USERNAME,
-            'password': password_encode
-        }
-        url = settings.BASE_URL + settings.AUTH_URL
-        req = requests.Request('POST', url, headers=self.headers, data=request_data)
-        res = self.request_handler(req)
-        return res.get('AuthId')
 
     @staticmethod
     def response_handler(resp: requests.Response) -> Dict:
@@ -87,10 +66,37 @@ class GSApi:
             raise RequestException(result.get('Error'))
         return result
 
+    @staticmethod
+    def base64_encoding(message: str) -> str:
+        message_bytes = message.encode('ascii')
+        base64_bytes = base64.b64encode(message_bytes)
+        return base64_bytes.decode('ascii')
+
+    def auth_from_creds(self) -> str:
+        """
+        Basic Authentication using username and encoded password
+        from credentials
+        :return: Token
+        """
+        password_encode = self.base64_encoding(PASSWORD)
+        request_data = {
+            'username': USERNAME,
+            'password': password_encode
+        }
+        url = settings.BASE_URL + settings.AUTH_URL
+        req = requests.Request('POST', url, data=request_data)
+        res = self.request_handler(req)
+        return res.get('AuthId')
+
+    def check_auth(self) -> bool:
+        """
+        Server checks token validity
+        """
+        url = settings.BASE_URL + settings.AUTH_CHECK_URL
+        req = requests.get(url, settings.HEADERS)
+        return False if req.status_code != 200 else True
+
     def base_get(self, url: str):
-        """
-        GET request
-        """
         req = requests.Request('GET', url, headers=self.headers)
         return self.request_handler(req)
 
@@ -161,6 +167,9 @@ class GSApi:
 
     # C L I E N T
 
+    def get_all_clients(self) -> List:
+        return self.base_get(settings.BASE_URL + settings.CLIENTS_BASE_URL)
+
     def get_client(self, client_id: str) -> dict:
         url = settings.BASE_URL + settings.CLIENTS_BASE_URL + client_id
         return self.base_get(url)
@@ -177,6 +186,23 @@ class GSApi:
         url = settings.BASE_URL + settings.CLIENTS_BASE_URL
         return self.base_delete(url, [client_id], 'client')
 
+    # V E H I C L E   M O D E L
 
-a = GSApi()
-print(a.auth_from_creds())
+    def get_all_vehicle_models(self) -> List:
+        return self.base_get(settings.BASE_URL + settings.VEHICLE_MODEL_BASE_URL)
+
+    def get_vehicle_model(self, vehicle_model_id: str) -> dict:
+        url = settings.BASE_URL + settings.VEHICLE_MODEL_BASE_URL + vehicle_model_id
+        return self.base_get(url)
+
+    def add_vehicle_model(self, data: Dict) -> dict:
+        url = settings.BASE_URL + settings.VEHICLE_MODEL_BASE_URL
+        return self.base_add(url, data, 'name', 'vehicle model')
+
+    def edit_vehicle_model(self, vehicle_model_id: str, data: Dict) -> dict:
+        url = settings.BASE_URL + settings.VEHICLE_MODEL_BASE_URL + vehicle_model_id
+        return self.base_edit(url, data, vehicle_model_id, 'vehicle model')
+
+    def delete_vehicle_model(self, vehicle_model_id: str) -> str:
+        url = settings.BASE_URL + settings.VEHICLE_MODEL_BASE_URL
+        return self.base_delete(url, [vehicle_model_id], 'vehicle model')
