@@ -33,11 +33,9 @@ def main():
     try:
         time.sleep(1)
         res = None
-        # res = get_model(model_id)
         # res = add_model(d_good_parent, name='Машина')
 
-        # res = get_object(object_id)
-        # res = find_users({'login': 'developer'})
+        res = find_users({'login': 'developer'})
         # res = delete_user('fbe1f07a-1224-405b-b2bd-a594a3ed4226')
 
         # res = add_user('developer00', True, d)
@@ -45,15 +43,15 @@ def main():
         # time.sleep(1)
 
         # res = transition_to_custom_roles.execute(user_groups_mapping)
-        edit_fields = {
-            'firstName': 'Федор',
-            'lastName': 'Иванов',
-            'email': 'developer@mail.ru',
-            'IsDeleted': False
-        }
-        # res = edit_user(test_data.deleted_user, edit_fields)
+        # edit_fields = {
+        #     'firstName': 'Dick',
+        #     'lastName': 'Good',
+        #     'email': 'richardwell@mail.com',
+        #     'status': 0,
+        # }
+        # res = edit_user(test_data.d_good_id, edit_fields)
 
-        res = get_user(test_data.deleted_user)
+        # res = get_user()
         #
         # res = find_object({'name': 'devmobil'})
 

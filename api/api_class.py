@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional, Union
 import base64
 import requests
 import time
@@ -49,7 +49,7 @@ class GSApi:
         return self.response_handler(resp)
 
     @staticmethod
-    def response_handler(resp: requests.Response) -> Dict:
+    def response_handler(resp: requests.Response) -> Optional[Dict]:
         if resp.status_code != 200:
             json_data = {}
             try:
@@ -106,7 +106,7 @@ class GSApi:
         POST request with body
         :param url: url to add entity
         :param body: request body
-        :param entity_name: entity name's value in body
+        :param entity_name: str entity name's value in body
         :param entity_hint: str representing entity's name (for logging purpose)
         :return: status of operation
         """
@@ -117,13 +117,13 @@ class GSApi:
         print(f'Created {entity_hint}: {body.get(entity_name, None)}')
         return res
 
-    def base_edit(self, url: str, body: Dict, entity_id: str,
-                  entity_hint: str = '') -> dict:
+    def base_edit(self, url: str, body: Union[List, Dict], entity_id: str,
+                  entity_hint: str = '') -> Union[List, Dict]:
         """
         PUT request with parameters
         :param url: url to edit entity
         :param body: entity's body
-        :param entity_id:
+        :param entity_id: str
         :param entity_hint: str representing entity's name (for logging purpose)
         :return: status of operation
         """
@@ -145,6 +145,8 @@ class GSApi:
                                data=str(entity_id))
         self.request_handler(req)
         return f'Deleted {entity_hint}:  {entity_id}'
+
+    # U S E R
 
     def get_all_users(self) -> List:
         return self.base_get(settings.BASE_URL + settings.USERS_BASE_URL)
@@ -206,3 +208,53 @@ class GSApi:
     def delete_vehicle_model(self, vehicle_model_id: str) -> str:
         url = settings.BASE_URL + settings.VEHICLE_MODEL_BASE_URL
         return self.base_delete(url, [vehicle_model_id], 'vehicle model')
+
+    #  O B J E C T   ( V E H I C L E )
+
+    def get_all_vehicles(self) -> List:
+        return self.base_get(settings.BASE_URL + settings.VEHICLE_BASE_URL)
+
+    def get_vehicle(self, vehicle_id: str) -> dict:
+        url = settings.BASE_URL + settings.VEHICLE_BASE_URL + vehicle_id
+        return self.base_get(url)
+
+    def add_vehicle(self, data: Dict) -> dict:
+        url = settings.BASE_URL + settings.VEHICLE_BASE_URL
+        return self.base_add(url, data, 'name', 'vehicle')
+
+    def edit_vehicle(self, vehicle_id: str, data: Dict) -> dict:
+        url = settings.BASE_URL + settings.VEHICLE_BASE_URL + vehicle_id
+        return self.base_edit(url, data, vehicle_id, 'vehicle')
+
+    def delete_vehicle(self, vehicle_id: str) -> str:
+        url = settings.BASE_URL + settings.VEHICLE_BASE_URL
+        return self.base_delete(url, [vehicle_id], 'vehicle')
+
+    def get_vehicle_counter(self, vehicle_id: str) -> list:
+        url = settings.BASE_URL + settings.VEHICLE_GET_COUNTER_URL + vehicle_id
+        return self.base_get(url)
+
+    def edit_vehicle_counter(self, vehicle_id: str, data: Union[List, Dict]) -> Union[List, Dict]:
+        url = settings.BASE_URL + settings.VEHICLE_PUT_COUNTER_URL
+        return self.base_edit(url, data, vehicle_id, 'vehicle_counter')
+
+    # S E N S O R
+
+    def get_sensors(self, vehicle_id: str) -> dict:
+        url = settings.BASE_URL + settings.SENSORS_BASE_URL % vehicle_id
+        return self.base_get(url)
+
+    def add_sensor(self, vehicle_id: str, data: Dict) -> dict:
+        url = settings.BASE_URL + settings.SENSORS_BASE_URL % vehicle_id
+        return self.base_add(url, data, 'name', 'sensor')
+
+    def edit_sensor(self, vehicle_id: str, data: Dict) -> dict:
+        url = settings.BASE_URL + settings.SENSORS_BASE_URL % vehicle_id
+        return self.base_edit(url, data, vehicle_id, 'sensor')
+
+    def delete_sensor(self, vehicle_id: str) -> str:
+        url = settings.BASE_URL + settings.SENSORS_BASE_URL % vehicle_id
+        return self.base_delete(url, [vehicle_id], 'sensor')
+
+    def get_sensor_types(self):
+        return self.base_get(settings.BASE_URL + settings.SENSORS_TYPES)
