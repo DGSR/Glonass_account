@@ -3,7 +3,8 @@ import base64
 import requests
 import time
 
-from credentials import settings
+from config import settings
+from credentials import config
 from api.exceptions import RequestException, GlonassSoftError
 from credentials.cred import USERNAME, PASSWORD
 
@@ -13,7 +14,7 @@ class GSApi:
     def __init__(self):
         self.last_request_time = time.time()
 
-        self.headers = settings.HEADERS
+        self.headers = config.HEADERS
         self.token = self.auth_from_creds()
         self.headers['X-Auth'] = self.token
 
@@ -93,7 +94,7 @@ class GSApi:
         Server checks token validity
         """
         url = settings.BASE_URL + settings.AUTH_CHECK_URL
-        req = requests.get(url, settings.HEADERS)
+        req = requests.get(url, config.HEADERS)
         return False if req.status_code != 200 else True
 
     def base_get(self, url: str):
