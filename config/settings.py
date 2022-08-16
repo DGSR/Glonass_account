@@ -16,6 +16,9 @@ VEHICLE_FIND_URL = 'v3/vehicles/find'
 VEHICLE_GET_COUNTER_URL = 'vehiclecounters/getvehiclecounters/'
 VEHICLE_PUT_COUNTER_URL = 'vehiclecounters/putvehiclecounters/'
 
+COMMANDS_PUT_URL = 'commandstemplates/put'
+COMMANDS_DELETE_URL = 'commandstemplates/delete'
+
 SENSORS_BASE_URL = 'vehicles/%s/sensors'
 SENSORS_TYPES = 'v3/sensors/types'
 

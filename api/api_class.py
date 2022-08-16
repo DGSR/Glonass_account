@@ -115,7 +115,10 @@ class GSApi:
         req = requests.Request('POST', url=url, headers=self.headers, json=body)
 
         res = self.request_handler(req)
-        print(f'Created {entity_hint}: {body.get(entity_name, None)}')
+        if type(body) == dict:
+            print(f'Created {entity_hint}: {body.get(entity_name, None)}')
+        else:
+            print(f'Created {entity_hint}: {body[0].get(entity_name, None)}')
         return res
 
     def base_edit(self, url: str, body: Union[List, Dict], entity_id: str,
@@ -259,3 +262,13 @@ class GSApi:
 
     def get_sensor_types(self):
         return self.base_get(settings.BASE_URL + settings.SENSORS_TYPES)
+
+    # C O M M A N D S
+
+    def edit_commands(self, data: List):
+        url = settings.BASE_URL + settings.COMMANDS_PUT_URL
+        return self.base_edit(url, data, data[0]['CommandName'], 'commands')
+
+    def delete_commands(self, commands_id: List) -> str:
+        url = settings.BASE_URL + settings.COMMANDS_DELETE_URL
+        return self.base_delete(url, commands_id, 'commands')

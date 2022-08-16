@@ -1,6 +1,7 @@
 from credentials.cred import USERNAME, PASSWORD, TOKEN, CRED_FILE
 from credentials.config import HEADERS
 from api.authentication import auth, check_auth, write_down_token
+from api.sensors import add_sensors_to_object
 from api.users import get_user, add_user, delete_user, find_users, edit_user
 from api.clients import get_clients, delete_client
 from api.objects import add_object, get_object
@@ -31,15 +32,19 @@ def main():
     HEADERS['X-Auth'] = token
 
     try:
-        time.sleep(1)
+        # time.sleep(1)
         res = None
-        # res = add_model(d_good_parent, name='Машина')
+        # names = [
+        #     'геркон', 'блокировка', 'зажигание 12В', 'геркон по аналогу', 'CAN', 'штатный',
+        #     'зажигание 24В', 'зажигание по проводу', '1 ДУТ', '2 ДУТ'
+        #     ]
+        # res = add_sensors_to_object('', 'Без ДУТ', 'блокировка')
+        res = add_sensors_to_object('по проводу', 'CAN', 'блокировка')
+        # [add_sensors_to_object(i) for i in names]
 
-        res = find_users({'login': 'developer'})
+        # res = find_users({'login': 'developer'})
         # res = delete_user('fbe1f07a-1224-405b-b2bd-a594a3ed4226')
 
-        # res = add_user('developer00', True, d)
-        # print(res)
         # time.sleep(1)
 
         # res = transition_to_custom_roles.execute(user_groups_mapping)
@@ -47,11 +52,11 @@ def main():
         #     'firstName': 'Dick',
         #     'lastName': 'Good',
         #     'email': 'richardwell@mail.com',
-        #     'status': 0,
+        #     'password': '202020'
         # }
         # res = edit_user(test_data.d_good_id, edit_fields)
 
-        # res = get_user()
+        # res = get_user(test_data.d_good_id)
         #
         # res = find_object({'name': 'devmobil'})
 
