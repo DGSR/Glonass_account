@@ -58,62 +58,80 @@ def read_json(filename):
     return data
 
 
-# def add_sensors_to_object(name):  # ign, dut, block):
-#     base_path = '/home/dev/Рабочий стол/Yandex.Disk/Загрузки/GLONASSSoft/Телтоника/'
-#     out_path = str(Path(__file__).resolve().parent.parent) + '/JSONTemplates/'
-#     base_name = 'Телтоника '
-#     base_extension = '.csv'
-#     sensors = []
-#     commands = []
-#
-#     filename = base_path + base_name + name + base_extension
-#     sensors.extend(read_csv(filename))
-#
-#     with open(base_path + base_name + name + '.json', 'w') as f:
-#         json.dump(sensors, f, ensure_ascii=False)
-
-
-def add_sensors_to_object(ign, dut, block):
-    # base_path = '/home/dev/Рабочий стол/Yandex.Disk/Загрузки/GLONASSSoft/Телтоника/'
-    base_path = str(Path(__file__).resolve().parent.parent) + '/JSON prod/'
+def add_sensors_to_object_old(name):  # ign, dut, block):
+    base_path = '/home/dev/Рабочий стол/Yandex.Disk/Загрузки/GLONASSSoft/Телтоника/'
+    out_path = str(Path(__file__).resolve().parent.parent) + '/JSONTemplates/'
     base_name = 'Телтоника '
-    base_extension = '.json'
+    base_extension = '.csv'
     sensors = []
     commands = []
-    vehicle_id = '26c9e784-5dbf-4fd6-981c-857d715c33ab'
+
+    filename = base_path + base_name + name + base_extension
+    sensors.extend(read_csv(filename))
+
+    with open(base_path + base_name + name + '.json', 'w') as f:
+        json.dump(sensors, f, ensure_ascii=False)
+
+
+def add_sensors_to_object(owner_id: str, vehicle_id: str, ign: str = '',
+                          dut: str = 'Без ДУТ', block: str = 'Без блокировки',
+                          templates_path: str = '/templates'):
+    """
+    Create sensors in GlonassSoft vehicles using names of ign, dut and block
+    Some sensors will be added with commands (hardcoded)
+    By default, function will not produce anything
+
+    :param owner_id: str Client's id
+    :param vehicle_id: str Vehicle's id
+    :param ign: str Ignition sensor
+    :param dut: str ДУТ or fuel level sensor
+    :param block: str block sensor
+    :param templates_path: path to JSON templates of sensors
+    :return: None
+    """
+    base_path = str(Path(__file__).resolve().parent) + templates_path
+    base_name = base_path + 'Телтоника '
+    extension = '.json'
+    sensors = []
+    commands = []
     commands_fields = {
-        'OwnerGuid': 'a29f3c54-4d06-4964-a80e-8bc6bcd68e30',
+        'OwnerGuid': owner_id,
         'VehicleGuid': vehicle_id
     }
+    # Check if there is any sensor to add
+    if ign == '' and dut == 'Без ДУТ' and block == 'Без блокировки':
+        print("No sensors to add")
+        return
 
+    # Check each sensor and add them to the list
     if ign != '':
-        ign_filename = base_path + base_name + 'зажигание ' + ign + base_extension
+        ign_filename = base_name + 'зажигание ' + ign + extension
         sensors.extend(read_json(ign_filename))
 
     if dut != 'Без ДУТ':
-        dut_filename = base_path + base_name + dut + base_extension
+        dut_filename = base_name + dut + extension
         sensors.extend(read_json(dut_filename))
 
         if dut == 'CAN':
-            command_filename = base_path + base_name + 'команды CAN' + base_extension
+            command_filename = base_name + 'команды CAN' + extension
             commands.extend(read_json(command_filename))
 
     if block != 'Без блокировки':
-        block_filename = base_path + base_name + block + base_extension
+        block_filename = base_name + block + extension
         sensors.extend(read_json(block_filename))
-        command_filename = base_path + base_name + 'команды на блокировку' + base_extension
+
+        command_filename = base_name + 'команды на блокировку' + extension
         commands.extend(read_json(command_filename))
-
         commands = [{**i, **commands_fields} for i in commands]
-    res = None
 
+    # Send list of sensors to api
     api = GSApi()
-    res = api.add_sensor(vehicle_id, sensors)
-    print(res)
-    time.sleep(1)
-    res = api.edit_commands(commands)
+    api.add_sensor(vehicle_id, sensors)
 
-    return res
+    # Send list of commands, if there are any
+    if len(commands) > 0:
+        time.sleep(1)
+        api.edit_commands(commands)
 
 
 
