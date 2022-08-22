@@ -11,6 +11,7 @@ def base_find(url: str, search_parameter: dict) -> dict:
     :return: entities from server matching search parameters
     """
     res = requests.post(url, headers=HEADERS, json=search_parameter)
+    print(res.content)
     result = res.json()[0]
     if result.get('Error'):
         raise RequestException(result.get('Error'))

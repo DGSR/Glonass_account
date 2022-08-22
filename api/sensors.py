@@ -1,6 +1,7 @@
 import csv
 import ast
 import json
+import os
 import time
 from copy import deepcopy
 from pathlib import Path
@@ -73,24 +74,23 @@ def add_sensors_to_object_old(name):  # ign, dut, block):
         json.dump(sensors, f, ensure_ascii=False)
 
 
-def add_sensors_to_object(owner_id: str, vehicle_id: str, ign: str = '',
-                          dut: str = 'Без ДУТ', block: str = 'Без блокировки',
-                          templates_path: str = '/templates'):
+def create_sensors_commands(owner_id: str, vehicle_id: str, task_id: str, **kwargs):
     """
-    Create sensors in GlonassSoft vehicles using names of ign, dut and block
-    Some sensors will be added with commands (hardcoded)
+    Create two lists: sensors and commands using names in kwargs.
     By default, function will not produce anything
+    kwargs should have field with key hwtype and value <brand name> of sensor
 
     :param owner_id: str Client's id
     :param vehicle_id: str Vehicle's id
-    :param ign: str Ignition sensor
-    :param dut: str ДУТ or fuel level sensor
-    :param block: str block sensor
-    :param templates_path: path to JSON templates of sensors
+    :param templates_path: relative path to JSON templates of sensors
+    :param kwargs: dict of sensors to create, key = type of sensor, value = name
     :return: None
     """
-    base_path = str(Path(__file__).resolve().parent) + templates_path
-    base_name = base_path + 'Телтоника '
+    if kwargs == {}:
+        return None, None
+    base_path = '/home/projects/squidward/GlonassSoft/templates/'
+    # base_path = str(Path(__file__).resolve().parent.joinpath(templates_path))
+    base_name = base_path + kwargs.get('hwtype', '') + ' '
     extension = '.json'
     sensors = []
     commands = []
@@ -98,40 +98,26 @@ def add_sensors_to_object(owner_id: str, vehicle_id: str, ign: str = '',
         'OwnerGuid': owner_id,
         'VehicleGuid': vehicle_id
     }
-    # Check if there is any sensor to add
-    if ign == '' and dut == 'Без ДУТ' and block == 'Без блокировки':
-        print("No sensors to add")
-        return
+    # creator.info(kwargs)
 
-    # Check each sensor and add them to the list
-    if ign != '':
-        ign_filename = base_name + 'зажигание ' + ign + extension
-        sensors.extend(read_json(ign_filename))
+    for key, value in kwargs.items():
+        if key == 'hwtype' or value == '':
+            continue
+        filename = base_name + value + extension
+        if os.path.exists(filename):
+            template_data = read_json(filename)
+            for i in template_data:
+                i['vehicleId'] = vehicle_id
+            sensors.extend(template_data)
+            command_filename = base_name + value + ' команды' + extension
+            if os.path.exists(command_filename):
+                commands.extend(read_json(command_filename))
+        else:
+            # better file name for prod
+            error_filename = '/'.join(filename.split('/')[::-1][:2][::-1])
+            text_error = f"Sensor template doesnt exist: {error_filename}"
+            # pyrus_notify(task_id, text_error)
 
-    if dut != 'Без ДУТ':
-        dut_filename = base_name + dut + extension
-        sensors.extend(read_json(dut_filename))
-
-        if dut == 'CAN':
-            command_filename = base_name + 'команды CAN' + extension
-            commands.extend(read_json(command_filename))
-
-    if block != 'Без блокировки':
-        block_filename = base_name + block + extension
-        sensors.extend(read_json(block_filename))
-
-        command_filename = base_name + 'команды на блокировку' + extension
-        commands.extend(read_json(command_filename))
-        commands = [{**i, **commands_fields} for i in commands]
-
-    # Send list of sensors to api
-    api = GSApi()
-    api.add_sensor(vehicle_id, sensors)
-
-    # Send list of commands, if there are any
     if len(commands) > 0:
-        time.sleep(1)
-        api.edit_commands(commands)
-
-
-
+        commands = [{**i, **commands_fields} for i in commands]
+    return sensors, commands
