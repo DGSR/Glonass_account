@@ -1,7 +1,6 @@
-/credentials/
 /venv/
 /.idea/
-
 **/__pycache__/
-/JSON old/
-/JSON prod/
+/credentials/
+
+*.csv
