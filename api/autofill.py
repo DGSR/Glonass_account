@@ -23,8 +23,8 @@ def autofill_user(login: str) -> dict:
         'description': login,
         'position': login,
         'isEnabled': True,
-        'status': 2,
         'groups': [],
+        'language': 1,
         'customGroups': ['f471d984-9bc1-44e1-a4a3-93eb83add545']  # Клиент
     }
 

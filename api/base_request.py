@@ -1,6 +1,7 @@
 import requests
 from credentials.config import HEADERS
 from api import RequestException
+from api.exceptions import GlonassSoftError
 
 
 def base_find(url: str, search_parameter: dict) -> dict:
@@ -49,6 +50,8 @@ def base_add(url: str, body: dict, entity_name: str, entity_hint: str = '') -> d
     result = res.json()
     if result.get('Error'):
         return result.get('Error')
+    if res.status_code != 200:
+        raise GlonassSoftError(error_code=res.status_code, msg=result)
 
     print(f'Created {entity_hint}: {body.get(entity_name, None)}')
     return result

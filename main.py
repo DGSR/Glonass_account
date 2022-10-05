@@ -1,6 +1,7 @@
 from credentials.cred import USERNAME, PASSWORD, CRED_FILE
 from credentials.config import HEADERS
 from api.authentication import auth, check_auth, write_down_token
+from api.exceptions import GlonassSoftError
 from api.users import get_user, add_user, delete_user, find_users, edit_user
 from api.clients import get_clients, delete_client
 from api.objects import add_object, get_object
@@ -38,24 +39,12 @@ def main():
         # res = get_clients('')
         # time.sleep(1)
 
-        # [add_sensors_to_object(i) for i in names]
-
-        # res = transition_to_custom_roles.execute(user_groups_mapping)
-        # res = edit_user(test_data.d_good_id, edit_fields)
-        #
-        # res = add_object(fields_objects)
-        # res = delete_client([])
-
-        # field_clients = {
-        #     'name': ''
-        # }
-        # res = create_client(field_clients)
-        #
         print(res)
 
-    except RequestException as e:
+    except Exception as e:
         print(e)
         return None
+    return None
 
 
 if __name__ == '__main__':
