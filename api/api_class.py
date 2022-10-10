@@ -6,7 +6,7 @@ from config import settings
 from datetime import datetime, timedelta
 from credentials.cred import USERNAME, PASSWORD, CRED_FILE
 
-from api.authentication import base64_encoding, write_down_token
+from api.utils import base64_encoding, write_down_token, first_index_lower
 
 
 class RequestException(Exception):
@@ -36,20 +36,6 @@ class GlonassSoftError(Exception):
         else:
             self.msg = f"{msg.get('ExceptionMessage') or 'ГЛОНАССSoft error'} {self.error_description}"
         super().__init__(self.msg)
-
-
-def first_index_lower(data: List) -> List:
-    """
-    Lowercase first letter of index. Pythonic style
-    :arg data List of dicts
-    """
-    dict_list = []
-    for counters in data:
-        inside_dict = {}
-        for i, v in counters.items():
-            inside_dict[i[0].lower() + i[1:]] = v
-        dict_list.append(inside_dict)
-    return dict_list
 
 
 class GSApi:
