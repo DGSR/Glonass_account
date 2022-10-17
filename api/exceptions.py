@@ -20,6 +20,5 @@ class GlonassSoftError(Exception):
     def __init__(self, msg=None, error_code=None):
         self.error_code = error_code
         self.error_description = self.errors.get(str(error_code), f'Неописуемая ошибка: {error_code}')
-        self.msg = f"{msg.get('Message', False) or 'ГЛОНАССSoft ошибка'} {self.error_description}"
+        self.msg = f"{msg or 'ГЛОНАССSoft ошибка'} {self.error_description}"
         super().__init__(self.msg)
-

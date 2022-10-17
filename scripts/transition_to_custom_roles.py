@@ -1,6 +1,3 @@
-from api.users import edit_user
-
-
 def execute(users_by_roles: dict) -> str:
     """
     assign users new groups (client roles) in dict
@@ -20,6 +17,6 @@ def execute(users_by_roles: dict) -> str:
             fields['customGroups'] = [*group]
         else:
             fields['customGroups'] = [group]
-        [edit_user(user_id, fields) for user_id in users]
+        [print(user_id, fields) for user_id in users]
 
     return 'Roles transitioned'

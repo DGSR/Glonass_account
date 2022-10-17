@@ -1,11 +1,12 @@
 import datetime
-from credentials.cred import OWNER, DEV_CLIENT
+from credentials.cred import OWNER
 
 
-def autofill_user(login: str) -> dict:
+def autofill_user(login: str, client_id: str) -> dict:
     """
     Глонасс Soft user autofill
     :param login: user's login
+    :param client_id: client
     :return: dict
     """
     d = datetime.datetime.now()
@@ -15,7 +16,7 @@ def autofill_user(login: str) -> dict:
         'email': login + '@tspb.su',
         'password': d.strftime("%d%m%Y"),
         # 'parentId': client,  #  v3
-        'agentGuid': DEV_CLIENT,
+        'agentGuid': client_id,
         'phone': login,
         'firstName': login,
         'lastName': login,
@@ -45,7 +46,7 @@ def autofill_client(name: str) -> dict:
     }
 
 
-def autofill_model(owner):
+def autofill_model(owner: str):
     """
     Глонасс Soft model autofill
     :param owner: client's id who owns model type

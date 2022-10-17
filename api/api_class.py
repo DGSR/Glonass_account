@@ -2,40 +2,13 @@ from copy import deepcopy
 from typing import List, Dict, Optional, Union, Tuple
 import requests
 import time
+
+from api.exceptions import RequestException, GlonassSoftError
 from config import settings
 from datetime import datetime, timedelta
 from credentials.cred import USERNAME, PASSWORD, CRED_FILE
 
 from api.utils import base64_encoding, write_down_token, first_index_lower
-
-
-class RequestException(Exception):
-    """"""
-
-
-class GlonassSoftError(Exception):
-    errors = {
-        "200": 'OK',
-        "301": 'Moved permanently',
-        "400": 'Bad request',
-        "401": 'Unauthorized',
-        "403": 'Forbidden',
-        "404": 'Not found',
-        "500": 'Internal server error',
-        "502": 'Bad gateway',
-        "503": 'Service unavailable',
-        "504": 'Gateway Timeout',
-        "429": 'Requests Per Second Exceeded'
-    }
-
-    def __init__(self, msg=None, error_code=None):
-        self.error_code = error_code
-        self.error_description = self.errors.get(str(error_code), f'Undescribed error: {error_code}')
-        if msg is None:
-            self.msg = "A ГЛОНАССSoft error" if error_code is None else self.error_description
-        else:
-            self.msg = f"{msg.get('ExceptionMessage') or 'ГЛОНАССSoft error'} {self.error_description}"
-        super().__init__(self.msg)
 
 
 class GSApi:
@@ -78,6 +51,7 @@ class GSApi:
             raise RequestException(result.get('Error'))
         token = result.get('AuthId')
         write_down_token(token, CRED_FILE)
+        self.token = token
 
         return token
 
@@ -91,6 +65,7 @@ class GSApi:
         :return: response
         """
         session_request = requests.Session()
+        resp = None
         # start = time.time()  # log
         # print('First request', start)  # log
         for _ in range(retries):
