@@ -170,6 +170,10 @@ class GSApi:
     def get_client(self, client_id: str) -> dict:
         return self.make_request('GET', settings.CLIENTS_BASE_URL + client_id)
 
+    def search_client(self, value):
+        param = {'q': f'{{"search":"{value}"}}'}
+        return self.make_request('GET', settings.CLIENTS_BASE_URL, params=param)
+
     def add_client(self, data: Dict) -> dict:
         return self.make_request('POST', settings.CLIENTS_BASE_URL, body=data)
 
@@ -227,19 +231,16 @@ class GSApi:
 
     def delete_vehicle(self, vehicle_id: str):
         url = settings.VEHICLE_BASE_URL
-        return self.make_request('DELETE', url, data=[vehicle_id])
+        return self.make_request('DELETE', url, body=[vehicle_id])
 
     def get_all_vehiclecounters(self, vehicle_id: str) -> list:
         url = settings.VEHICLE_GET_COUNTER_URL + vehicle_id
         data = self.make_request('GET', url)
-        data_lower = first_index_lower(data)
-        return data_lower
+        return data
 
     def edit_vehiclecounter(self, data: Union[List, Dict]) -> Union[List, Dict]:
         url = settings.VEHICLE_PUT_COUNTER_URL
-        data = [data]
-        data = first_index_lower(data)
-        api_response = self.make_request('PUT', url, body=data)
+        api_response = self.make_request('PUT', url, body=[data])
         return api_response[0]
 
     # S E N S O R
@@ -264,32 +265,38 @@ class GSApi:
     def get_sensor_types(self):
         return self.make_request('GET', settings.SENSORS_TYPES)
 
-    # C O M M A N D S
+    # C O M M A N D   T E M P L A T E S
 
-    def get_all_commands(self, vehicle_id: str):
-        params = {
-            'vehicleGuid': '{' + f'{vehicle_id}' + '}'
-        }
-        url = settings.COMMANDS_GET_URL[:-1]
+    def get_all_commandtemplates(self, vehicle_id: str):
+        params = dict(vehicleGuid=f'{{{vehicle_id}}}')
+        url = settings.COMMANDS_TEMPLATE_GET_URL[:-1]
         return self.make_request('GET', url, params=params)
 
-    def edit_command(self, data: List):
+    def edit_commandtemplate(self, data: List):
         body = data if type(data) == list else [data]
-        return self.make_request('PUT', settings.COMMANDS_PUT_URL, body=body)[0]
+        return self.make_request('PUT', settings.COMMANDS_TEMPLATE_PUT_URL, body=body)[0]
 
-    def add_command(self, data: List):
-        return self.edit_command(data if type(data) == list else [data])
+    def add_commandtemplate(self, data: List):
+        return self.edit_commandtemplate(data if type(data) == list else [data])
 
-    def delete_command(self, commands_id: List):
-        url = settings.COMMANDS_DELETE_URL
+    def delete_commandtemplate(self, commands_id: List):
+        url = settings.COMMANDS_TEMPLATE_DELETE_URL
         return self.make_request('DELETE', url, body=commands_id)
+
+    # C O M M A N D S
+
+    def search_commands(self, value):
+        param = {'q': f'{{imei:"{value}"}}'}
+        return self.make_request('GET', settings.COMMANDS_GET_URL, params=param)
+
+    def send_commands(self, data: List):
+        url = settings.COMMANDS_PUT_URL
+        return self.make_request('PUT', url, body=data, headers={'X-Agent': data[0].get('owner')})
 
     # T E M P L A T E S
 
     def get_all_templates(self, vehicle_id: str):
-        params = {
-            'q': str({"vehicleId": vehicle_id})
-        }
+        params = dict(q=str({"vehicleId": vehicle_id}))
         url = settings.TEMPLATES_BASE_URL[:-1]
         return self.make_request('GET', url, params=params)
 

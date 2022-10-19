@@ -1,4 +1,5 @@
 from api.api_class import GSApi
+from api.autofill import autofill_client
 
 
 def main():
@@ -6,6 +7,7 @@ def main():
     try:
         res = None
         api = GSApi()
+
         res = api.find_user({'login': 'developer'})
 
         print(res)

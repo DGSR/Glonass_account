@@ -38,7 +38,7 @@ def autofill_client(name: str) -> dict:
     """
     return {
         'name': name,
-        'agentInfoType': 2,
+        'agentInfoType': 0,
         'owner': OWNER,
         'client': {
             'accFullName': name
